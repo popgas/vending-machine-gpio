@@ -1,5 +1,6 @@
 assets/external/
 __pycache__/
+.idea/
 .web
 *.db
 *.py[cod]
