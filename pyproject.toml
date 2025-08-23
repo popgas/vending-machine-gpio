@@ -1,4 +1,4 @@
 [project]
-name = "vending-machine-popgas"
+name = "vending-machine-gpio"
 version = "0.1"
 license = { file = "MIT" }
