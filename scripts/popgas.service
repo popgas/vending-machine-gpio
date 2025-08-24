@@ -1,0 +1,15 @@
+[Unit]
+Description=PopGas Vending Machine GPIO
+After=network.target
+
+[Service]
+User=popgas
+WorkingDirectory=/home/popgas/PopGas/vending-machine-gpio
+ExecStart=/home/popgas/PopGas/vending-machine-gpio/boot.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+
