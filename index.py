@@ -3,8 +3,11 @@ import time
 
 from flask import Flask, jsonify
 from gpiozero import LED
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+
+CORS(app)
 
 @app.get("/trigger/<pin>")
 def home(pin):
@@ -24,4 +27,4 @@ def activate_pin(pin_num):
         print(f"Erro ao acionar saída {pin_num}: {e}")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=False)
