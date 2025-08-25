@@ -2,8 +2,12 @@
 import time
 
 from flask import Flask, jsonify
+from flask_cors import CORS
+
+from gpiozero.pins.lgpio import LGPIOFactory
 from gpiozero import LED
-from flask_cors import CORS, cross_origin
+
+factory = LGPIOFactory(chip=0)
 
 app = Flask(__name__)
 
