@@ -37,17 +37,11 @@ def list_cameras(max_tested=10):
 
 @app.get("/take-photo/<camera>")
 def take_photo(camera):
-    cap = cv2.VideoCapture(camera)
+    cap = cv2.VideoCapture(int(camera))
 
     try:
         if not cap.isOpened():
             raise ValueError("Não foi possível abrir a câmera")
-
-        time.sleep(1)
-
-        # Clear buffer
-        for _ in range(5):
-            cap.read()
 
         time.sleep(1)
         ret, frame = cap.read()
@@ -83,4 +77,4 @@ def activate_pin(pin_num):
         print(f"Erro ao acionar saída {pin_num}: {e}")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=8000, debug=False)
