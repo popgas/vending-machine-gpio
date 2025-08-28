@@ -1,13 +1,16 @@
 # app.py
+import base64
 import time
 
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from gpiozero.pins.lgpio import LGPIOFactory
+# import lgpio
+# from gpiozero.pins.lgpio import LGPIOFactory
 from gpiozero import LED
+import cv2
 
-factory = LGPIOFactory(chip=0)
+# factory = LGPIOFactory(chip=0)
 
 app = Flask(__name__)
 
@@ -20,6 +23,55 @@ def home(pin):
 @app.get("/health")
 def health():
     return jsonify(status="ok")
+
+@app.get("/available-cameras")
+def list_cameras(max_tested=10):
+    available_cameras = []
+    for i in range(max_tested):
+        cap = cv2.VideoCapture(i)
+        if cap is not None and cap.isOpened():
+            available_cameras.append(i)
+            cap.release()
+
+    return jsonify(available_cameras=available_cameras)
+
+@app.get("/take-photo/<camera>")
+def take_photo(camera):
+    cap = cv2.VideoCapture(camera)
+
+    try:
+        if not cap.isOpened():
+            raise ValueError("Não foi possível abrir a câmera")
+
+        time.sleep(1)
+
+        # Clear buffer
+        for _ in range(5):
+            cap.read()
+
+        time.sleep(1)
+        ret, frame = cap.read()
+
+        if not ret or frame is None:
+            raise ValueError("Não foi possível abrir a câmera")
+
+        success, buffer = cv2.imencode('.jpg', frame)
+
+        if not success:
+            raise RuntimeError("Falha ao codificar o frame em JPEG")
+
+        jpg_bytes = buffer.tobytes()
+        b64_str = base64.b64encode(jpg_bytes).decode('utf-8')
+
+        # Monta o Data URI
+        base64_image = f"data:image/jpeg;base64,{b64_str}"
+
+        return jsonify(status="ok", image=base64_image)
+    except Exception as e:
+        raise
+
+    finally:
+        cap.release()
 
 def activate_pin(pin_num):
     try:
